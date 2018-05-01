@@ -10,6 +10,7 @@ import sys
 import glob
 import zipfile
 import logging
+from xlrd import open_workbook
 
 # Local imports
 
@@ -36,8 +37,18 @@ def setup_logger(log_level, log_file_path):
 
     logging.info('Initialised Logger')
 
-def read_excel(file_path, mode):
-    pass
+def read_excel(file_path):
+
+    wb = open_workbook(file_path)
+    values = []
+    for s in wb.sheets():
+        for row in range(1, s.nrows):
+            col_names = s.row(0)
+            col_value = []
+            for name, col in zip(col_names, range(s.ncols)):
+                value  = (s.cell(row,col).value)
+                values.append(value)
+    return values
 
 def unzip_files(zip_file_folder, unzip_file_folder):
     """
@@ -46,24 +57,23 @@ def unzip_files(zip_file_folder, unzip_file_folder):
 
     Args:
         zip_file_path
-    retruns:
-        folder path : location of unzipped files
-        file list : list of files unzipped
+
+    Retruns:
+        folder_path : location of unzipped files
+        file_list : list of files unzipped
     """
     zip_file_list = glob.glob(zip_file_folder + os.sep + '*.zip')
+
     for zip_file in zip_file_list:
         if zipfile.is_zipfile(zip_file):
             logging.info("Processing ZIP file %s" % zip_file)
             extract_folder = unzip_file_folder + os.sep +\
                              os.path.basename(zip_file).split('.')[0]
-            print extract_folder
             if not os.path.exists(extract_folder):
                 os.mkdir(extract_folder)
             with zipfile.ZipFile(zip_file, 'r') as zip_f:
                 zip_f.extractall(extract_folder)
-                print glob.gloB(extract_folder)
+                return extract_folder
         else:
-            logging.info("Invalid ZIP file %s" % zip_file)
+            logging.error("Invalid ZIP file %s" % zip_file)
 
-
-    return '', ''
