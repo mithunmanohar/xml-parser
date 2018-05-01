@@ -8,6 +8,8 @@ __author__ = "mithun"
 # Global imports
 import os
 import sys
+import xlrd
+import xlwt
 import logging
 
 
@@ -19,23 +21,7 @@ from src.utilities import utils
 
 ZIP_FILE_LOCATION = ""
 
-def setup_logger(log_level, log_file_path):
-    """
-    Sets up logger with the specified log level and log location
-    Args:
-        log_level : log level severity
-        log_file_path : path in which log has to be created
-    returns : None
-    """
 
-    logging.basicConfig(
-        filename=log_file_path,
-        format='%(asctime)s %(levelname)s: %(message)s',
-        datefmt='%m/%d/%Y %I:%M:%S %p',
-        level=log_level
-        )
-
-    logging.info('Initialised Logger')
 
 
 def check_and_process_zip(zip_file_location):
@@ -52,10 +38,11 @@ def check_and_process_zip(zip_file_location):
     """
 
     if os.path.isdir(zip_file_location):
-        pass
+        print dir(zip)
     else:
-        logging.warning('Zip file location not found')
+        logging.error('Zip file location not found')
+    #file_list, file_location = utils.unzip()
 
 if __name__ == '__main__':
-    setup_logger(logging.INFO, 'start_process.log')
+    utils.setup_logger(logging.INFO, '../../logs/start_process.log')
     file_folder = check_and_process_zip(ZIP_FILE_LOCATION)
